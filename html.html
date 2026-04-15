@@ -1,0 +1,522 @@
+Here's the **COMPLETE ENHANCED VERSION** with **real betting games**, **backend integration ready**, **customizable colors**, and **professional game images**:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TakaBet16 - Ultimate Betting Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #f7931e;
+            --accent-color: #ffd23f;
+            --dark-color: #1a1a1a;
+            --light-color: #f8f9fa;
+            --success-color: #00d4aa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #0f0f23 0%, #2d1b69 50%, #1a1a2e 100%);
+        }
+
+        /* Header */
+        header {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--accent-color);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .balance {
+            background: var(--success-color);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        /* Hero */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ff6b35" stop-opacity="0.3"/><stop offset="100%" stop-color="%23f7931e" stop-opacity="0"/></radialGradient></defs><rect width="1200" height="800" fill="url(%23a)"/><circle fill="%23ffd23f" opacity="0.1" cx="200" cy="300" r="150"/><circle fill="%2300d4aa" opacity="0.1" cx="1000" cy="500" r="200"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: slideInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            animation: slideInUp 1s ease 0.2s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: slideInUp 1s ease 0.4s both;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid var(--accent-color);
+        }
+
+        /* Games Dashboard */
+        .dashboard {
+            padding: 100px 0 80px;
+            background: var(--light-color);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        /* Live Games */
+        .live-games {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .live-game {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .live-game:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+
+        .live-game::before {
+            content: 'LIVE';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .game-image {
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .live-game:hover .game-image img {
+            transform: scale(1.1);
+        }
+
+        .game-content {
+            padding: 1.5rem;
+        }
+
+        .game-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .multiplier {
+            background: var(--success-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .bet-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .bet-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .bet-low { background: #e74c3c; color: white; }
+        .bet-high { background: var(--success-color); color: white; }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 4rem 0 1rem;
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 { font-size: 2.5rem; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">TakaBet16</div>
+            <ul class="nav-links">
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#live">Live Games</a></li>
+                <li><a href="#crash">Crash</a></li>
+                <li><a href="#dice">Dice</a></li>
+                <li><a href="#slots">Slots</a></li>
+            </ul>
+            <div class="user-section">
+                <div class="balance">$1,250.50</div>
+                <i class="fas fa-user-circle" style="font-size: 2rem; cursor: pointer;"></i>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Bet Big, Win Bigger!</h1>
+            <p>Join thousands of players winning real money every minute</p>
+            <div class="cta-buttons">
+                <a href="#dashboard" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Play Now
+                </a>
+                <a href="#" class="btn btn-secondary" onclick="showDeposit()">
+                    <i class="fas fa-wallet"></i> Deposit
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="dashboard">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Live Statistics</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" data-target="12894">0</div>
+                    <div>Active Players</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="247">$</div>
+                    <div>Total Bets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="89">%</div>
+                    <div>Win Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="1542">$</div>
+                    <div>Jackpot</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Games -->
+    <section id="live" class="dashboard">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Live Betting Games</h2>
+            </div>
+            <div class="live-games">
+                <!-- CRASH GAME -->
+                <div class="live-game" onclick="playGame('crash')">
+                    <div class="game-image">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=220&fit=crop" alt="Crash">
+                    </div>
+                    <div class="game-content">
+                        <h3 class="game-title">🚀 Crash</h3>
+                        <div class="game-meta">
+                            <span class="multiplier">x<span id="crash-multiplier">1.47</span></span>
+                            <span>00:23</span>
+                        </div>
+                        <div class="bet-buttons">
+                            <button class="bet-btn bet-low" onclick="placeBet(event, 'low')">LOW</button>
+                            <button class="bet-btn bet-high" onclick="placeBet(event, 'high')">HIGH</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DICE GAME -->
+                <div class="live-game" onclick="playGame('dice')">
+                    <div class="game-image">
+                        <img src="https://images.unsplash.com/photo-1572897938532-d89748e1e9a4?w=400&h=220&fit=crop" alt="Dice">
+                    </div>
+                    <div class="game-content">
+                        <h3 class="game-title">🎲 Dice</h3>
+                        <div class="game-meta">
+                            <span class="multiplier">x<span id="dice-multiplier">2.13</span></span>
+                            <span>52.7%</span>
+                        </div>
+                        <div class="bet-buttons">
+                            <button class="bet-btn bet-low" onclick="placeBet(event, 'under')">UNDER</button>
+                            <button class="bet-btn bet-high" onclick="placeBet(event, 'over')">OVER</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROULETTE -->
+                <div class="live-game" onclick="playGame('roulette')">
+                    <div class="game-image">
+                        <img src="https://images.unsplash.com/photo-1603399696203-3d5f41e48eda?w=400&h=220&fit=crop" alt="Roulette">
+                    </div>
+                    <div class="game-content">
+                        <h3 class="game-title">🎰 Roulette</h3>
+                        <div class="game-meta">
+                            <span class="multiplier">x<span id="roulette-multiplier">14.2</span></span>
+                            <span>Next: 17</span>
+                        </div>
+                        <div class="bet-buttons">
+                            <button class="bet-btn bet-low" onclick="placeBet(event, 'red')">RED</button>
+                            <button class="bet-btn bet-high" onclick="placeBet(event, 'black')">BLACK</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLOTS -->
+                <div class="live-game" onclick="playGame('slots')">
+                    <div class="game-image">
+                        <img src="https://images.unsplash.com/photo-1548707876-81a8a8b1559b?w=400&h=220&fit=crop" alt="Slots">
+                    </div>
+                    <div class="game-content">
+                        <h3 class="game-title">🍒 Slots</h3>
+                        <div class="game-meta">
+                            <span class="multiplier">x<span id="slots-multiplier">7.89</span></span>
+                            <span>Jackpot: $15K</span>
+                        </div>
+                        <div class="bet-buttons">
+                            <button class="bet-btn bet-low" onclick="placeBet(event, 'spin')">SPIN $1</button>
+                            <button class="bet-btn bet-high" onclick="placeBet(event, 'max')">MAX BET</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PLINKO -->
+                <div class="live-game" onclick="playGame('plinko')">
+                    <div class="game-image">
+                        <img src="https://images.unsplash.com/photo-1601001435828-419e309a2f53?w=400&h=220&fit=crop" alt="Plinko">
+                    </div>
+                    <div class="game-content">
+                        <h3 class="game-title">📍 Plinko</h3>
+                        <div class="game-meta">
+                            <span class="multiplier">x<span id="plinko-multiplier">3.24</span></span>
+                            <span>Drop Now</span>
+                        </div>
+                        <div class="bet-buttons">
+                            <button class="bet-btn bet-low" onclick="placeBet(event, 'drop')">DROP</button>
+                            <button class="bet-btn bet-high"

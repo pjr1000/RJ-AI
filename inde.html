@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Crash Game Demo</title>
+
+<style>
+body {
+  background: #0b1d2a;
+  color: white;
+  text-align: center;
+  font-family: Arial;
+}
+
+#multiplier {
+  font-size: 60px;
+  margin-top: 50px;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 18px;
+  margin: 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+#betBtn { background: green; color: white; }
+#cashBtn { background: orange; color: black; }
+
+canvas {
+  background: black;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>✈️ Crash Game (Demo)</h1>
+
+<p id="balance">Balance: 100</p>
+<div id="multiplier">1.00x</div>
+
+<button id="betBtn" onclick="placeBet()">Bet</button>
+<button id="cashBtn" onclick="cashOut()" disabled>Cash Out</button>
+
+<canvas id="graph" width="600" height="300"></canvas>
+
+<script>
+let balance = 100;
+let bet = 10;
+
+let currentMultiplier = 1;
+let crashPoint = 0;
+let playing = false;
+let cashedOut = false;
+
+const canvas = document.getElementById("graph");
+const ctx = canvas.getContext("2d");
+
+function generateCrashPoint() {
+  // realistic exponential distribution
+  let r = Math.random();
+  return Math.max(1, (1 / (1 - r))).toFixed(2);
+}
+
+function placeBet() {
+  if (playing) return;
+
+  if (bet > balance) {
+    alert("Not enough balance");
+    return;
+  }
+
+  balance -= bet;
+  updateBalance();
+
+  crashPoint = parseFloat(generateCrashPoint());
+  currentMultiplier = 1;
+  playing = true;
+  cashedOut = false;
+
+  document.getElementById("cashBtn").disabled = false;
+
+  startGame();
+}
+
+function startGame() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  let x = 0;
+
+  let interval = setInterval(() => {
+    currentMultiplier += 0.02 * currentMultiplier;
+
+    drawGraph(x, currentMultiplier);
+    x += 2;
+
+    document.getElementById("multiplier").innerText =
+      currentMultiplier.toFixed(2) + "x";
+
+    if (currentMultiplier >= crashPoint) {
+      clearInterval(interval);
+      crash();
+    }
+
+  }, 50);
+}
+
+function drawGraph(x, mult) {
+  ctx.fillStyle = "red";
+  let y = canvas.height - mult * 50;
+
+  ctx.fillRect(x, y, 2, 2);
+}
+
+function cashOut() {
+  if (!playing || cashedOut) return;
+
+  cashedOut = true;
+  playing = false;
+
+  let win = bet * currentMultiplier;
+  balance += win;
+
+  updateBalance();
+
+  document.getElementById("multiplier").innerText =
+    "Cashed Out @ " + currentMultiplier.toFixed(2) + "x";
+
+  document.getElementById("cashBtn").disabled = true;
+}
+
+function crash() {
+  playing = false;
+
+  document.getElementById("multiplier").innerText =
+    "💥 Crashed @ " + crashPoint + "x";
+
+  document.getElementById("cashBtn").disabled = true;
+}
+
+function updateBalance() {
+  document.getElementById("balance").innerText =
+    "Balance: " + balance.toFixed(2);
+}
+</script>
+
+</body>
+</html>

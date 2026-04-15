@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Super Slot Demo</title>
+
+<style>
+body {
+  background: #0b1d2a;
+  color: white;
+  font-family: Arial;
+  text-align: center;
+}
+
+h1 {
+  color: gold;
+}
+
+#grid {
+  display: inline-block;
+  margin: 20px;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 70px;
+  height: 70px;
+  border: 2px solid #333;
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  background: #eee;
+  color: black;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+
+.win {
+  background: gold !important;
+  color: black;
+  transform: scale(1.1);
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 18px;
+  background: gold;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+#controls {
+  margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎰 Super Slot</h1>
+
+<p id="balance">Balance: 100</p>
+<p id="info">Press SPIN</p>
+
+<div id="grid"></div>
+
+<div id="controls">
+  Bet: <input type="number" id="bet" value="5" min="1">
+  <br><br>
+  <button onclick="spin()">SPIN</button>
+</div>
+
+<script>
+const rows = 4;
+const cols = 5;
+
+let balance = 100;
+
+const symbols = [
+  {name:"A", weight:5, payout:5},
+  {name:"K", weight:6, payout:4},
+  {name:"Q", weight:7, payout:3},
+  {name:"J", weight:8, payout:2},
+  {name:"W", weight:2, payout:0} // wild
+];
+
+const multipliers = [1,2,3,5];
+
+function getWeightedSymbol() {
+  let pool = [];
+  symbols.forEach(s => {
+    for(let i=0;i<s.weight;i++) pool.push(s);
+  });
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function generateGrid() {
+  let grid = [];
+  for(let r=0;r<rows;r++){
+    let row=[];
+    for(let c=0;c<cols;c++){
+      row.push(getWeightedSymbol().name);
+    }
+    grid.push(row);
+  }
+  return grid;
+}
+
+function render(grid) {
+  const el = document.getElementById("grid");
+  el.innerHTML = "";
+
+  grid.forEach((row,r)=>{
+    let rowDiv = document.createElement("div");
+    rowDiv.className = "row";
+
+    row.forEach((cell,c)=>{
+      let div = document.createElement("div");
+      div.className = "cell";
+      div.id = `cell-${r}-${c}`;
+      div.innerText = cell;
+      rowDiv.appendChild(div);
+    });
+
+    el.appendChild(rowDiv);
+  });
+}
+
+function animateSpin(callback){
+  let spins = 10;
+  let interval = setInterval(()=>{
+    render(generateGrid());
+    spins--;
+    if(spins<=0){
+      clearInterval(interval);
+      callback();
+    }
+  },100);
+}
+
+function calculateWin(grid, bet){
+  let total = 0;
+
+  for(let r=0;r<rows;r++){
+    let base = grid[r][0];
+    let count = 1;
+
+    for(let c=1;c<cols;c++){
+      if(grid[r][c] === base || grid[r][c] === "W"){
+        count++;
+      } else break;
+    }
+
+    let symbolData = symbols.find(s=>s.name===base);
+
+    if(count >= 3 && symbolData && base !== "W"){
+      let win = symbolData.payout * bet * count;
+      total += win;
+
+      // highlight
+      for(let i=0;i<count;i++){
+        document.getElementById(`cell-${r}-${i}`)
+          .classList.add("win");
+      }
+    }
+  }
+
+  return total;
+}
+
+function spin(){
+  let bet = parseInt(document.getElementById("bet").value);
+
+  if(bet > balance){
+    document.getElementById("info").innerText = "Not enough balance!";
+    return;
+  }
+
+  balance -= bet;
+  document.getElementById("balance").innerText = "Balance: " + balance;
+
+  animateSpin(()=>{
+    let grid = generateGrid();
+    render(grid);
+
+    let multiplier = multipliers[Math.floor(Math.random()*multipliers.length)];
+    let win = calculateWin(grid, bet) * multiplier;
+
+    balance += win;
+
+    document.getElementById("balance").innerText = "Balance: " + balance;
+    document.getElementById("info").innerText =
+      win > 0 
+      ? `🎉 Win: ${win} (x${multiplier})`
+      : "No win";
+  });
+}
+
+// initial render
+render(generateGrid());
+</script>
+
+</body>
+</html>
